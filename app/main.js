@@ -5,21 +5,16 @@ console.log("Logs from your program will appear here!");
 
 let store = {};
 
+
 const server = net.createServer((connection) => {
     console.log('Client connected');
-
+    
     connection.on('data', (data) => {
-        // const command = data.toString().trim().split('\r\n').slice(1); // Skip the first '*2'
-        // const commandType = command[1];
-        // const commandValue = command[3];
-        // console.log("Command: ", command);
-        // console.log("Command Type: ", commandType);
-        // console.log("Command Value: ", commandValue);
-
+        
         const command = parseArrayCommand(data);
         console.log("parseArrayCommand: ", parseArrayCommand(data));
-
-
+        
+        
         if (command[0].toLowerCase() === 'ping') {
             connection.write('+PONG\r\n');
             console.log('PONG sent to client');
@@ -43,6 +38,11 @@ const server = net.createServer((connection) => {
     });
 });
 
+/**
+ * Parses a command array from a data string in Redis protocol format.
+ * @param {Buffer} data - The data to parse.
+ * @returns {Array<string>} The parsed command array.
+ */
 function parseArrayCommand(data) {
     const lines = data.toString().trim().split('\r\n');
     const commandLength = parseInt(lines[0].substring(1), 10); // Remove the '*' and convert to number
